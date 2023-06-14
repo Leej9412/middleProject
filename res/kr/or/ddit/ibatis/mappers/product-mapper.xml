@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apche.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="product">
+
+	<!-- 상품테이블에 있는 모든 정보를 불러오는 쿼리 -->
+ 		<select id="getAllProduct" resultClass="productVo" parameterClass="map">
+			SELECT * FROM (
+               SELECT * FROM (
+                SELECT ROWNUM row_num, product.* FROM product where 1=1 
+                <isNotEmpty property="category" prepend= " and ">
+                	P_CAT_NO = #category#
+                </isNotEmpty>
+                <isNotEmpty property="searchWord" prepend= " and ">
+                	P_NAME LIKE '%' || #searchWord# || '%'
+                </isNotEmpty>
+                ) WHERE row_num >= #paging.beginRow#
+                ) WHERE row_num <![CDATA[<=]]> #paging.endRow#
+		</select>
+		
+	<!-- 카테고리 이름 출력하기 -->
+		<select id="getCategoryName" resultClass="productVo" >
+			select * from PRODUCT_CATEGORY
+		</select>
+
+	<!-- 카테고리별 상품 출력하는 쿼리 -->
+ 		<select id="getCategoryProduct" resultClass="productVo" parameterClass="int">
+			select * from product where P_CAT_NO=#p_cat_no#;
+		</select>
+		
+	<!-- 상품테이블에 있는 상품의 수 -->
+		<select id="getProductCount" resultClass="int" parameterClass="map">
+			select count(*) from product where 1=1 
+                <isNotEmpty property="category" prepend= " and ">
+                	P_CAT_NO = #category#
+                </isNotEmpty>
+                <isNotEmpty property="searchWord" prepend= " and ">
+                	P_NAME LIKE '%' || #searchWord# || '%'
+                </isNotEmpty>
+		</select>
+		
+	<!-- 상품테이블에 상품 새로 추가하기 -->
+		<insert id="insertProduct" parameterClass="productVo">
+			insert into product
+    	     (P_ID, P_NAME, P_PRICE, P_DETAIL, P_QTY, P_SIZE, P_MILEAGE, P_CAT_NO, SAVE_FILE_NAME, FILE_SIZE)
+        	   values 
+        		(PRODUCT_SEQ.NEXTVAL, #p_name#, #p_price#, #p_detail#, #p_qty#, #p_size#, #p_mileage#, #p_cat_no#, #save_file_name#, #file_size#)
+		</insert>
+		
+		
+	<!-- 상품테이블에 있는 상품번호로 상품 이미지 이름 가격을 가져와 쇼핑몰 화면에 보여줄 쿼리 -->
+		<select id="showProduct" resultClass="productVo" parameterClass="int">
+			select * from product
+				where p_id=#p_id#
+		</select>
+		
+		<delete id="deleteProduct" parameterClass="int">
+			DELETE FROM product
+     			WHERE p_id = #p_id#
+		</delete>
+		
+	<!-- 상품 이름으로 검색하여 상품 목록 출력하는 쿼리 -->
+		<select id="searchProductName" resultClass="productVo" parameterClass="String">
+			SELECT * FROM PRODUCT WHERE P_NAME LIKE '%'||#data#||'%'
+		</select>
+		
+</sqlMap>

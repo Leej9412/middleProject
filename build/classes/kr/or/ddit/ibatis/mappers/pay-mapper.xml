@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	이 문서는 iBatis에서 처리할 SQL문을 작성하는 문서입니다...
+ -->
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.or//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="pay">
+	
+	
+	<!-- 결제내역 전체 출력 -->
+<!-- 	<select id="selectAllPay" resultClass="payListVO" parameterClass="String"> -->
+<!-- 		select * from product a, product_images b, product_category c, product_selected d, pay e -->
+<!-- 			where a.p_id=b.p_id  -->
+<!-- 				and a.p_cat_no=c.p_cat_no  -->
+<!-- 				and a.p_id=d.p_id  -->
+<!-- 				and d.pay_no=e.pay_no  -->
+<!-- 				and e.mem_id=#mem_id# -->
+<!-- 				and e.pay_status!=0 -->
+<!-- 				and e.pay_status!=3 -->
+<!-- 	</select> -->
+	<select id="selectAllPay" resultClass="payListVO" parameterClass="String">
+		select * from product a, product_category c, product_selected d, pay e
+			where a.p_cat_no=c.p_cat_no 
+				and a.p_id=d.p_id 
+				and d.pay_no=e.pay_no 
+				and e.mem_id=#mem_id#
+				and e.pay_status!=0
+				and e.pay_status!=3
+			order by d.pay_no desc
+	</select>
+	
+	
+	<!-- 결제 직전 상품 체크해서 구매하기(체크아웃) 누르면 결제창에 pay insert -->
+	<insert id="insertPay" parameterClass="payVO">
+		insert into pay	(pay_no, pay_total, pay_date, mem_id)
+			values (pay_seq.nextval, #pay_total#, sysdate, #mem_id#)
+	</insert>
+	
+	
+	<!-- PaOyN 가져와서 -->
+	<select id="selectPayNO" parameterClass="String" resultClass="payVO">
+		select pay_no from pay where rownum=1 and mem_id=#mem_id# order by pay_no desc
+	</select>
+	
+	
+	<!-- 결제 완료 후 결제api로부터 성공 뜨면 결제성공으로 업데이트, 실패 뜨면 결제실패로 업데이트 -->
+	<update id="updatePay" parameterClass="payVO">
+		update pay set pay_status=#pay_status#
+			where pay_no=#pay_no#
+		<!-- pay_status
+		0: 결제대기
+		1: 결제성공
+		2: 결제실패
+		3: 결제취소(결제 중 취소)
+		4: 취소/교환/환불 -->
+	</update>
+	
+	<!-- 결제 완료 후 상품 재고 update -->
+	<update id="updateProductQty" parameterClass="payListVO">
+		update product set p_qty 
+		= (select p_qty from product where p_id=#p_id#) - #ps_qty#
+		where p_id=#p_id#
+	</update>
+	
+	
+</sqlMap>

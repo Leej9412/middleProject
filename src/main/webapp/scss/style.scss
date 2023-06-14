@@ -1,0 +1,39 @@
+/*
+* Template Name: UntreeStore
+* Template Author: Untree.co
+* Author URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/
+@import "functions";
+@import "variables";
+@import "mixins";
+
+$primary: #b84592;
+$secondary: #12947f;
+$black: #000000;
+$white: #ffffff;
+$grey: #5b5656;
+$heading_color: #dddde6;
+$text_light_color: #333;
+$bg_color: #37373f;
+$font-family: 'Playfair Display', serif;
+$font-family-sans-serif: 'Muli', sans-serif;
+
+@import 'site-base';
+@import 'site-navbar';
+@import 'site-blocks';
+@import 'site-elements';
+@import 'site-footer';
+//로그인관련 scss
+//Common
+@import 'common/extend.scss';
+@import 'common/fonts.scss';
+@import 'common/minxi.scss';
+@import 'common/variables.scss';
+@import 'common/global.scss';
+
+//layout
+@import 'layouts/main.scss';
+
+// Responsive
+@import 'layouts/responsive.scss';

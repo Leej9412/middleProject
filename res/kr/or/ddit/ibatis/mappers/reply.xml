@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apche.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="reply">
+<!-- 댓글 등록  -->
+	<insert id="insertReply" parameterClass="replyVO">
+		insert into BOARD_REPLY ( BOARD_REPLY_NO, BOARD_REPLY_CONTENTS, REPLY_DATE, BOARD_NO,REPLY_NAME)
+				values ( board_reply_num_seq.nextval, #board_reply_contents#, sysdate, #board_no#,#reply_name#)
+				
+		<selectKey keyProperty="board_reply_no" resultClass="int">
+		   select board_reply_num_seq.currval from dual
+		</selectKey>		
+	</insert>
+<!-- 댓글 삭제 -->
+	<delete id="deleteReply" parameterClass="int">
+		delete from BOARD_REPLY where BOARD_REPLY_NO=#renum#
+	</delete>
+<!-- 댓글 수정-->
+	<update id="modifyReply" parameterClass="replyVO">
+		update BOARD_REPLY set 
+						 BOARD_REPLY_CONTENTS = #board_reply_contents#,
+						 REPLY_DATE =sysdate
+		where  BOARD_REPLY_NO=#board_reply_no#
+	</update>
+	<select id="selectReply" parameterClass="int" resultClass="replyVO">
+		select * from board_reply where BOARD_NO = #num#
+	
+	</select>
+</sqlMap>

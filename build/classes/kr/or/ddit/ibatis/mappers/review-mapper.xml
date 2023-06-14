@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+ <!DOCTYPE sqlMap
+     PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+     "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ <sqlMap namespace="review">
+    
+    <!-- 리뷰 등록  -->
+   <insert id="insertReview" parameterClass="reviewVo">
+      INSERT INTO REVIEW VALUES(
+         REVIEW_SEQ.NEXTVAL,
+         #re_content#, 
+         SYSDATE,
+         #re_rate#, 
+         #pay_no#, 
+         #mem_id#
+      )
+      <selectKey keyProperty="re_no" resultClass="int">
+         SELECT REVIEW_SEQ.CURRVAL FROM DUAL
+      </selectKey>
+   </insert>
+   
+   <!-- 리뷰 수정 -->
+   <update id="modifyMyReview" parameterClass="reviewVo">
+      update review set
+                re_rate = #re_rate#,
+               re_content = #re_content#,
+               re_date = sysdate
+       where re_no = #re_no#
+   
+   </update>
+   
+   
+   <!-- 마이페이지에 나올 내가 쓴 리뷰만 보는 리스트-->
+<!--    <select id="myReviewList" resultClass="reviewVo" parameterClass="String"> -->
+   <select id="myReviewList" resultClass="reviewVo" parameterClass="Map">
+<!--        select * from review where mem_id = #mem_id# -->
+         select * from review a, PRODUCT_SELECTED b
+       where a.pay_no = b.pay_no and b.p_id=#p_id# and a.mem_id=#mem_id#
+
+   </select>
+   
+   <!-- 상품 페이지에서 볼 리뷰 가져오기 --> <!-- 세숀에서 p_id를 얻어올수 있을지... -->
+      <select id="productReviewList" resultClass="reviewVo" parameterClass="Map">
+      select  a.re_no, 
+              a.re_content,
+              a.re_date,
+              a.re_rate,
+              a.pay_no,
+              a.mem_id,
+              b.p_id
+        from review A, PRODUCT_SELECTED B
+       where a.pay_no = b.pay_no
+       and b.p_id = #p_id#
+       order by a.re_no desc
+   </select>
+   
+   <!-- 내가 쓴 리뷰의  갯수 -->
+    <select id="myReviewTotalCount" resultClass="Integer" parameterClass="Map">
+       select count(*) from review
+        where mem_id=#mem_id#
+    </select>
+    
+
+    
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteMyReview" parameterClass="Integer">
+       delete from REVIEW where RE_NO = #re_num#
+    </delete>
+    
+    <!-- 상품 페이지에서 볼 리뷰의 갯수 다 고쳐야함!!!-->
+    <select id="prodReviewTotalCount" resultClass="Integer" parameterClass="Map">
+          SELECT COUNT(*)FROM REVIEW 
+            where  rec_no in (select z.rec_no from member x, pay y, reciept z
+                     where x.mem_id=y.mem_id and y.pay_no=z.pay_no and x.mem_id=#mem_id# )
+    </select>
+ 
+    <select id="selectByPage" resultClass="reviewVo" parameterClass="int">
+       select * from REVIEW  where re_no = #re_no#
+    </select>
+ 
+ </sqlMap> 

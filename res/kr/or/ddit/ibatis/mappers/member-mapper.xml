@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	이 문서는 iBatis에서 처리할 SQL문을 작성하는 문서입니다...
+ -->
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.or//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="member">
+	<insert id="insertMember" parameterClass="memberVo">
+		INSERT INTO MEMBER(MEM_ID, MEM_PASS, MEM_NAME, MEM_NICK, MEM_ADDR1, MEM_ADDR2, MEM_TEL, MEM_MAIL, MEM_BIRTH) 
+		VALUES (#mem_id#,
+				#mem_pass#,
+				#mem_name#, 
+				#mem_nick#, 
+				#mem_addr1#, 
+				#mem_addr2#, 
+				#mem_tel#, 
+				#mem_mail#, 
+				#mem_birth#)
+	</insert>
+	
+	<select id="loginCheck" resultClass="memberVo" parameterClass="memberVo">
+		SELECT * FROM MEMBER WHERE MEM_ID = #mem_id# AND MEM_PASS = #mem_pass#
+	</select>
+	
+	<select id="getMember" parameterClass="String" resultClass="memberVo">
+		SELECT * FROM MEMBER 
+			WHERE MEM_ID = #mem_id#
+	</select>
+	
+	<select id="identityVerification" resultClass="memberVo" parameterClass="memberVo">
+		SELECT * FROM MEMBER WHERE MEM_ID = #mem_id# AND MEM_MAIL = #mem_mail#
+	</select>
+	
+	<update id="changePassword" parameterClass="memberVo">
+		UPDATE MEMBER SET MEM_PASS = #mem_pass# WHERE MEM_ID = #mem_id# 
+	</update>
+	
+	<select id="findId" parameterClass="memberVo" resultClass="String"> 
+		SELECT MEM_ID FROM MEMBER WHERE MEM_NAME= #mem_name# AND MEM_TEL= #mem_tel# 
+	</select>
+	
+	<update id="modifyInformation" parameterClass="memberVo">
+		UPDATE MEMBER SET MEM_PASS = #mem_pass#,
+						  MEM_NAME = #mem_name#,
+						  MEM_NICK = #mem_nick#, 
+						  MEM_ADDR1 = #mem_addr1#,
+						  MEM_ADDR2 = #mem_addr2#,
+						  MEM_TEL = #mem_tel#,
+						  MEM_MAIL = #mem_mail#, 
+						  MEM_BIRTH = #mem_birth#
+					WHERE MEM_ID = #mem_id# 
+	</update>
+	
+	<delete id="deleteAccount" parameterClass="String">
+		DELETE FROM MEMBER
+				WHERE MEM_ID = #mem_id# 
+	</delete>
+	
+	
+</sqlMap>

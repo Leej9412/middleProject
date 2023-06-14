@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	이 문서는 iBatis에서 처리할 SQL문을 작성하는 문서입니다...
+ -->
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.or//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="cart">
+
+	
+	<!-- 장바구니 담은 상품 중복검사 -->
+	<select id="checkCartProduct" resultClass="cartVO" parameterClass="cartVO">
+		select * from cart where p_id=#p_id# and mem_id=#mem_id#
+	</select>
+
+
+<!-- 	 장바구니 전체 선택 --> 
+<!-- 	<select id="selectAllCart" resultClass="cartVO" parameterClass="String"> -->
+<!-- 		select * from cart where mem_id=#mem_id# -->
+<!-- 	</select> -->
+	
+	
+	<!-- 장바구니에 담은 상품정보를 불러와서 장바구니 목록에 상품정보를 출력할 쿼리 : 장바구니 전체 선택 -->
+<!-- 	<select id="selectAllCart" resultClass="cartListVO" parameterClass="String"> -->
+<!-- 			select * from product a, product_images b, product_category c, cart d -->
+<!-- 				where a.p_id=b.p_id and a.p_cat_no=c.p_cat_no and a.p_id=d.p_id and d.mem_id=#mem_id# -->
+<!-- 	</select> -->
+	<select id="selectAllCart" resultClass="cartListVO" parameterClass="String">
+			select * from product a, product_category c, cart d
+				where a.p_cat_no=c.p_cat_no and a.p_id=d.p_id and d.mem_id=#mem_id#
+	</select>
+	
+	
+	<!-- 장바구니 선택 -->
+	<select id="selectOneCart" resultClass="cartVO" parameterClass="int">
+		select * from cart where cart_no=#cart_no#
+	</select>
+	
+	
+	<!-- 장바구니 추가 -->
+	<insert id="insertCart" parameterClass="cartVO">
+		insert into cart (cart_no, cart_qty, cart_date, p_id, mem_id)
+			values (cart_seq.nextval, #cart_qty#, sysdate, #p_id#, #mem_id#)
+	</insert>
+	
+	
+	<!-- 장바구니 수량 변경 -->
+	<update id="updateCartQty" parameterClass="cartVO">
+		update cart set cart_qty=#cart_qty#
+			where p_id=#p_id# and mem_id=#mem_id#
+	</update>
+	
+	
+	<!-- 장바구니 삭제 -->
+	<delete id="deleteCart" parameterClass="cartVO">
+		delete from cart where cart_no=#cart_no# and mem_id = #mem_id#
+	</delete>
+	
+	
+	<!-- 장바구니 전체 삭제 -->
+	<delete id="deleteAllCart" parameterClass="String">
+		delete from cart where mem_id=#mem_id#
+	</delete>
+	
+	
+	<!-- 장바구니 품목 갯수 조회 -->
+	<select id="selectProdCount" resultClass="int" parameterClass="String">
+		select count(*) from cart where mem_id=#mem_id#
+	</select>
+	
+	
+	
+</sqlMap>
